@@ -14,3 +14,14 @@ spring:
         allow-core-thread-timeout: true
       # 线程名称前缀
       thread-name-prefix: async-task-
+##日志配置
+logging:
+  #level 日志等级 指定命名空间的日志输出
+  level:
+    com.xkcoding.async.task: info
+  #file 指定输出文件的存储路径
+  file: logs/app.log
+  #pattern 指定输出场景的日志输出格式
+  pattern:
+    console: "%msg%n"
+    file: "%d %-5level : %msg%n"

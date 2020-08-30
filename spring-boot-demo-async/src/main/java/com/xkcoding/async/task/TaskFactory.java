@@ -1,10 +1,13 @@
 package com.xkcoding.async.task;
 
+import com.xkcoding.async.util.UnsafeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
+import sun.misc.Unsafe;
 
+import java.lang.reflect.Field;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -25,6 +28,15 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class TaskFactory {
 
+
+
+    /**
+     * 模拟3秒的同步任务
+     */
+    public void task3() throws InterruptedException {
+        doTask("task3", 3);
+    }
+
     /**
      * 模拟5秒的异步任务
      */
@@ -35,47 +47,26 @@ public class TaskFactory {
     }
 
     /**
-     * 模拟2秒的异步任务
+     * 模拟日志专用线程池的任务
      */
-    @Async
-    public Future<Boolean> asyncTask2() throws InterruptedException {
-        doTask("asyncTask2", 2);
-        return new AsyncResult<>(Boolean.TRUE);
+    @Async(value = "sodAppLogAsyncExecutor")
+    public void logTask(int x) throws InterruptedException {
+        doTask("日志专用task"+x,1);
     }
 
     /**
-     * 模拟3秒的异步任务
+     * 模拟演示专用线程池的任务
      */
-    @Async
-    public Future<Boolean> asyncTask3() throws InterruptedException {
-        doTask("asyncTask3", 3);
-        return new AsyncResult<>(Boolean.TRUE);
+    @Async(value = "demoSimpleExecutor")
+    //通过查看线程的内存地址可以发现,SimpleAsyncExecutor每次都是新建的线程,并没有复用；通过查看它的doExecute()也可以证实此点
+    public void demoTask(int i) throws InterruptedException {
+        doTask("演示专用task" + i,1);
     }
 
-    /**
-     * 模拟5秒的同步任务
-     */
-    public void task1() throws InterruptedException {
-        doTask("task1", 5);
+    private void doTask(String taskName, Integer time) {
+        log.info("{}模拟执行【{}】,线程内存地址:{}", taskName, Thread.currentThread().getName(), UnsafeUtil.addressOf(Thread.currentThread()));
     }
 
-    /**
-     * 模拟2秒的同步任务
-     */
-    public void task2() throws InterruptedException {
-        doTask("task2", 2);
-    }
 
-    /**
-     * 模拟3秒的同步任务
-     */
-    public void task3() throws InterruptedException {
-        doTask("task3", 3);
-    }
 
-    private void doTask(String taskName, Integer time) throws InterruptedException {
-        log.info("{}开始执行，当前线程名称【{}】", taskName, Thread.currentThread().getName());
-        TimeUnit.SECONDS.sleep(time);
-        log.info("{}执行成功，当前线程名称【{}】", taskName, Thread.currentThread().getName());
-    }
 }
