@@ -11,3 +11,6 @@ spring:
     job:
       ## 服务启动时禁止Job自动执行
       enabled: false
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

@@ -2,9 +2,15 @@ package com.zyg.batch.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zyg.batch.entity.User;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @author zyg
  */
 public interface UserMapper extends BaseMapper<User> {
+
+    List<User> selectByAgeLeft(@Param("ageLeft")Integer ageLeft,@Param("_skiprows")Integer skipRows,@Param("_pagesize")Integer pageSize);
+
 }

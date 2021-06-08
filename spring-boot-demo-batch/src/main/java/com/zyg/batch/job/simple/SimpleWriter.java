@@ -2,6 +2,7 @@ package com.zyg.batch.job.simple;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -9,6 +10,7 @@ import java.util.List;
  * @author zyg
  */
 @Slf4j
+@Component("simpleWriter")
 public class SimpleWriter<T> implements ItemWriter<Integer> {
     @Override
     public void write(List<? extends Integer> list) throws Exception {

@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @Slf4j
-public class SimpleJob {
+public class SimpleJobConfig {
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
     @Autowired
@@ -24,7 +24,7 @@ public class SimpleJob {
     /**
      * 编排 - 定义Step,将ItemReader、ItemProcess、ItemWriter编排到一起
      */
-    @Bean
+    @Bean("simpleStep")
     public Step simpleStep(){
         return  stepBuilderFactory.get("simpleStep")
             .chunk(2)
@@ -37,7 +37,7 @@ public class SimpleJob {
     /**
      * 编排 - 定义Job,将Step编排到一起
       */
-    @Bean
+    @Bean("simpleJob")
     public Job simpleJob(){
         return jobBuilderFactory.get("simpleJob")
             .start(simpleStep())
