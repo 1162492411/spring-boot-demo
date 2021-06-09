@@ -26,6 +26,10 @@ public class BaseTest {
     @Qualifier("compositeReaderJob")
     private Job compositeReaderJob;
 
+    @Autowired
+    @Qualifier("multiReaderJob")
+    private Job multiReaderJob;
+
     @Test
     public void testMybatisPagingJob() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
         JobParameters jobParameters = new JobParametersBuilder().addLong("leftAge", 12L).toJobParameters();
@@ -40,7 +44,16 @@ public class BaseTest {
             .addLong("rightAge", 17L)
             .toJobParameters();
         JobExecution jobExecution = jobLauncher.run(compositeReaderJob, jobParameters);
-
     }
+
+    @Test
+    public void testMultiReaderJob() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+        JobParameters jobParameters = new JobParametersBuilder()
+            .addLong("leftAge", 11L)
+            .addLong("rightAge", 17L)
+            .toJobParameters();
+        JobExecution jobExecution = jobLauncher.run(multiReaderJob, jobParameters);
+    }
+
 
 }
