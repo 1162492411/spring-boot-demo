@@ -46,6 +46,7 @@ public class CompositeReaderJobConfig {
             .reader(compositeReaderOutReader(null,null))
             .processor(new SimpleProcessor())
             .writer(new SimpleWriter<>())
+            .stream(new OutReader())
             .build();
     }
 

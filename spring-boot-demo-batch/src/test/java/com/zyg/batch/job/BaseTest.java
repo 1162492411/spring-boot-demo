@@ -24,10 +24,6 @@ public class BaseTest {
     private Job mybatisPagingJob;
 
     @Autowired
-    @Qualifier("compositeReaderJob")
-    private Job compositeReaderJob;
-
-    @Autowired
     @Qualifier("multiReaderJob")
     private Job multiReaderJob;
 
@@ -44,7 +40,8 @@ public class BaseTest {
             .addLong("leftAge", 11L)
             .addLong("rightAge", 17L)
             .toJobParameters();
-        JobExecution jobExecution = jobLauncher.run(compositeReaderJob, jobParameters);
+        Job job = SpringBeanUtil.getBean("compositeReaderJob",Job.class);
+        JobExecution jobExecution = jobLauncher.run(job, jobParameters);
     }
 
     @Test

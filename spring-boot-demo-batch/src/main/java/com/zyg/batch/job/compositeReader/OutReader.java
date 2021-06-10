@@ -49,4 +49,11 @@ public class OutReader extends AbstractPagingItemReader<User> {
     protected void doJumpToPage(int i) {
 
     }
+
+
+    @Override
+    protected void doOpen() throws Exception {
+        logger.info("进入了模拟器的");
+        super.doOpen();
+    }
 }
