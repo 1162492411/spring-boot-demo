@@ -1,5 +1,6 @@
 package com.zyg.batch.job;
 
+import com.zyg.batch.utils.SpringBeanUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.*;
@@ -53,6 +54,16 @@ public class BaseTest {
             .addLong("rightAge", 17L)
             .toJobParameters();
         JobExecution jobExecution = jobLauncher.run(multiReaderJob, jobParameters);
+    }
+
+    @Test
+    public void testCompositeWriterJob() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+        JobParameters jobParameters = new JobParametersBuilder()
+            .addLong("leftAge", 11L)
+            .addLong("rightAge", 17L)
+            .toJobParameters();
+        Job job = SpringBeanUtil.getBean("compositeWriterJob",Job.class);
+        JobExecution jobExecution = jobLauncher.run(job, jobParameters);
     }
 
 

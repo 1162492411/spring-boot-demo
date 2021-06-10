@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 
-@Configuration
+@Configuration("multiReadJobConfig")
 @Slf4j
 public class JobConfig {
     @Autowired
@@ -33,9 +33,6 @@ public class JobConfig {
             .reader(new AggregateReader())
             .processor(new AggregateProcessor())
             .writer(new AggregateWriter())
-            .faultTolerant()
-            .retry(BusinessException.class)
-            .retryLimit(5)
             .build();
     }
 
