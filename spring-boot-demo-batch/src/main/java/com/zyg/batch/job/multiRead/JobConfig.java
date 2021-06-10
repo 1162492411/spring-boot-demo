@@ -1,6 +1,7 @@
 package com.zyg.batch.job.multiRead;
 
 import com.zyg.batch.entity.User;
+import com.zyg.batch.exception.BusinessException;
 import com.zyg.batch.job.compositeReader.OutReader;
 import com.zyg.batch.job.simple.SimpleProcessor;
 import com.zyg.batch.job.simple.SimpleWriter;
@@ -28,10 +29,13 @@ public class JobConfig {
     @Bean("multiReaderStep")
     public Step mybatisPagingStep(){
         return  stepBuilderFactory.get("multiReaderStep")
-            .chunk(1)
+            .chunk(2)
             .reader(new AggregateReader())
             .processor(new AggregateProcessor())
             .writer(new AggregateWriter())
+            .faultTolerant()
+            .retry(BusinessException.class)
+            .retryLimit(5)
             .build();
     }
 
