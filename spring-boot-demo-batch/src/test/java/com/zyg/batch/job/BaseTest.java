@@ -73,5 +73,16 @@ public class BaseTest {
         Assert.assertEquals(jobExecution.getStatus(),BatchStatus.COMPLETED);
     }
 
+    @Test
+    public void testCommonMultiDemoJobConfig() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+        Job job = SpringBeanUtil.getBean("commonMultiDemoJob",Job.class);
+        JobParameters jobParameters = new JobParametersBuilder()
+            .addLong("leftId", 11L)
+            .addLong("rightId", 17L)
+            .toJobParameters();
+        JobExecution jobExecution = jobLauncher.run(job, jobParameters);
+        Assert.assertEquals(jobExecution.getStatus(),BatchStatus.COMPLETED);
+    }
+
 
 }

@@ -1,4 +1,5 @@
 DELETE FROM user;
+DELETE FROM teacher;
 
 INSERT INTO user (id, name, age, email) VALUES
 (1, 'P1', 11, 'test1@baomidou.com'),

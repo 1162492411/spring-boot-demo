@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author zyg
  */
@@ -16,4 +18,9 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
     @Autowired
     private UserMapper userMapper;
+
+    @Override
+    public List<User> selectByIdRange(Integer idLeft, Integer idRight, Integer skipRows, Integer pageSize) {
+        return userMapper.selectByIdRange(idLeft,idRight,skipRows,pageSize);
+    }
 }

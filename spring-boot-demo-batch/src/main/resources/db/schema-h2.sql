@@ -9,6 +9,7 @@ CREATE TABLE user
     PRIMARY KEY (id)
 );
 
+DROP TABLE IF EXISTS teacher;
 CREATE TABLE teacher
 (
     id int(11) NOT NULL COMMENT '主键ID',
