@@ -49,7 +49,7 @@ public class JobConfig {
      */
     @Bean("realSimpleWriterDemoWriter")
     public ItemWriter<Teacher> writer(){
-        return new RealWriter();
+        return new Writer();
     }
 
     /**

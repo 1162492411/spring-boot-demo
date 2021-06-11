@@ -13,18 +13,24 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.step.tasklet.TaskletStep;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.support.CompositeItemWriter;
 import org.springframework.batch.item.support.PassThroughItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration("compositeWriterJobConfig")
 @Slf4j
@@ -38,11 +44,16 @@ public class JobConfig {
     @Autowired
     private PlatformTransactionManager txManager;
 
+    @StepScope
     @Bean("compositeWriterReader")
-    public ItemReader<User> reader(){
+    public ItemReader<User> reader(@Value("#{jobParameters[leftId]}")Long leftId, @Value("#{jobParameters[rightId]}")Long rightId){
         MyBatisPagingItemReader<User> reader = new MyBatisPagingItemReader<>();
         reader.setSqlSessionFactory(sqlSessionFactory);
         reader.setQueryId("com.zyg.batch.mapper.UserMapper.selectByBatchPage");
+        Map<String,Object> params = new HashMap<>();
+        params.put("idLeft",leftId);
+        params.put("idRight",rightId);
+        reader.setParameterValues(params);
         return reader;
     }
 
@@ -59,11 +70,14 @@ public class JobConfig {
     @Bean("compositeWriterOutWriter")
     public ItemWriter<User> compositeWriters(){
         OutWriter<User> outWriter = new OutWriter<>();
-//        outWriter.setInnerWriter1(new InnerWriter1());
-//        outWriter.setInnerWriter2(new InnerWriter2());
         outWriter.setInnerWriter1(i1());
         outWriter.setInnerWriter2(i2());
         return outWriter;
+    }
+
+    @Bean
+    public ItemProcessor processor(){
+        return new Processor();
     }
 
     /**
@@ -78,8 +92,8 @@ public class JobConfig {
 
         TaskletStep step = stepBuilderFactory.get("compositeWriterStep")
             .chunk(2)
-            .reader(reader())
-            .processor(new PassThroughItemProcessor())
+            .reader(reader(null,null))
+            .processor(processor())
             .writer(compositeWriters())
             .build();
         //配置事务

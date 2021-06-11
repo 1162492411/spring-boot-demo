@@ -16,8 +16,8 @@ public class InnerWriter2 implements ItemWriter<Teacher> {
 
     @Override
     public void write(List<? extends Teacher> list) throws Exception {
-        log.info("此时user表的数据条数为:{}",teacherService.count());
+//        log.info("此时user表的数据条数为:{}",teacherService.count());
         teacherService.saveBatch((Collection<Teacher>) list);
-        log.info("此时user表的数据条数为:{}",teacherService.count());
+//        log.info("此时user表的数据条数为:{}",teacherService.count());
     }
 }

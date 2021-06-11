@@ -54,19 +54,21 @@ public class BaseTest {
         JobExecution jobExecution = jobLauncher.run(multiReaderJob, jobParameters);
     }
 
+    //todo:这个job目前会无限循环,因为插入的数据导致下次会被读取出来
     @Test
     public void testCompositeWriterJob() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
         JobParameters jobParameters = new JobParametersBuilder()
-            .addLong("leftAge", 11L)
-            .addLong("rightAge", 17L)
+            .addLong("leftId", 11L)
+            .addLong("rightRight", 17L)
             .toJobParameters();
         Job job = SpringBeanUtil.getBean("compositeWriterJob",Job.class);
         JobExecution jobExecution = jobLauncher.run(job, jobParameters);
+        Assert.assertEquals(jobExecution.getStatus(),BatchStatus.COMPLETED);
     }
 
     @Test
     public void testMysqlWriterDemoJob() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
-        Job job = SpringBeanUtil.getBean("mysqlWriterDemoJob",Job.class);
+        Job job = SpringBeanUtil.getBean("realSimpleWriterDemoJob",Job.class);
         JobExecution jobExecution = jobLauncher.run(job, emptyJobParameters);
         Assert.assertEquals(jobExecution.getStatus(),BatchStatus.COMPLETED);
     }
