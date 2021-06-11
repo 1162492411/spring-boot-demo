@@ -100,7 +100,7 @@ public abstract class AbstractListItemReader<K> extends AbstractItemCountingItem
             } else {
                 this.results.clear();
             }
-            doReadPage();
+            this.results.addAll(doReadPage());
             page++;
             skipRows += (results == null ? 0 : results.size());
             if(results == null || results.isEmpty()){
@@ -112,9 +112,9 @@ public abstract class AbstractListItemReader<K> extends AbstractItemCountingItem
     }
 
     /**
-     * 扩展方法,子类在该方法中将业务数据添加进results中
+     * 扩展方法,子类在该方法中将业务数据返回
      */
-    abstract protected void doReadPage();
+    abstract protected List<K> doReadPage();
 
     @Override
     protected void doOpen() throws Exception {
