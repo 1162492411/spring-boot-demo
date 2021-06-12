@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * @author zyg
  */
-@Configuration
+@Configuration("simpleDemo-JobConfig")
 @Slf4j
 public class SimpleJobConfig {
     @Autowired
@@ -24,9 +24,9 @@ public class SimpleJobConfig {
     /**
      * 编排 - 定义Step,将ItemReader、ItemProcess、ItemWriter编排到一起
      */
-    @Bean("simpleStep")
+    @Bean("simpleDemo-Step")
     public Step simpleStep(){
-        return  stepBuilderFactory.get("simpleStep")
+        return  stepBuilderFactory.get("simpleDemo-Step")
             .chunk(2)
             .reader(new SimpleReader<>())
             .processor(new SimpleProcessor())
@@ -37,9 +37,9 @@ public class SimpleJobConfig {
     /**
      * 编排 - 定义Job,将Step编排到一起
       */
-    @Bean("simpleJob")
+    @Bean("simpleDemo-Job")
     public Job simpleJob(){
-        return jobBuilderFactory.get("simpleJob")
+        return jobBuilderFactory.get("simpleDemo-Job")
             .start(simpleStep())
             .build();
     }

@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * @author zyg
  */
-@Configuration("commonMultiDemoJobConfig")
+@Configuration("commonMultiDemo-JobConfig")
 @Slf4j
 public class JobConfig {
     @Autowired
@@ -31,7 +31,7 @@ public class JobConfig {
     private StepBuilderFactory stepBuilderFactory;
 
     @StepScope
-    @Bean("commonMultiDemoReader")
+    @Bean("commonMultiDemo-Reader")
     public ItemReader<User> reader(@Value("#{jobParameters[leftId]}")Long leftId,@Value("#{jobParameters[rightId]}")Long rightId){
         BusinessReader reader = new BusinessReader();
         Map<String,Object> paramMap = new HashMap<>();
@@ -42,7 +42,7 @@ public class JobConfig {
         return reader;
     }
 
-    @Bean("commonMultiDemoWriter")
+    @Bean("commonMultiDemo-Writer")
     public ItemWriter<Teacher> writer(){
         return new BusinessWriter();
     }
@@ -50,9 +50,9 @@ public class JobConfig {
     /**
      * 编排 - 定义Step,将ItemReader、ItemProcess、ItemWriter编排到一起
      */
-    @Bean("commonMultiDemoStep")
+    @Bean("commonMultiDemo-Step")
     public Step mybatisPagingStep(){
-        return  stepBuilderFactory.get("commonMultiDemoStep")
+        return  stepBuilderFactory.get("commonMultiDemo-Step")
             .chunk(1)
             .reader(reader(null,null))
             .processor(new Processor())
@@ -63,9 +63,9 @@ public class JobConfig {
     /**
      * 编排 - 定义Job,将Step编排到一起
      */
-    @Bean("commonMultiDemoJob")
+    @Bean("commonMultiDemo-Job")
     public Job mybatisPagingJob(){
-        return jobBuilderFactory.get("commonMultiDemoJob")
+        return jobBuilderFactory.get("commonMultiDemo-Job")
             .start(mybatisPagingStep())
             .build();
     }

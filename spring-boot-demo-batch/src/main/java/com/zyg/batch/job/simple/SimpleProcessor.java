@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
  * @author zyg
  */
 @Slf4j
-@Component("simpleProcessor")
 public class SimpleProcessor<T,K> implements ItemProcessor<User,Integer> {
 
     @Override

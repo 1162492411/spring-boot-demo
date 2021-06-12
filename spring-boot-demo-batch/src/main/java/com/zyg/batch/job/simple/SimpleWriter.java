@@ -10,7 +10,6 @@ import java.util.List;
  * @author zyg
  */
 @Slf4j
-@Component("simpleWriter")
 public class SimpleWriter<T> implements ItemWriter<Integer> {
     @Override
     public void write(List<? extends Integer> list) throws Exception {

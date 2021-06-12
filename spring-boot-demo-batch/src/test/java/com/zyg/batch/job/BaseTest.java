@@ -20,19 +20,17 @@ public class BaseTest {
     @Autowired
     public JobLauncher jobLauncher;
     public JobParameters emptyJobParameters = new JobParameters();
-    @Autowired
-    @Qualifier("userMybatisPagingJob")
-    private Job mybatisPagingJob;
 
-    @Autowired
-    @Qualifier("multiReaderJob")
-    private Job multiReaderJob;
-
+    /**
+     * MyBatis分页读取插件示例
+     * @See com.zyg.batch.job.mybatisPagingReader
+     */
     @Test
     public void testMybatisPagingJob() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
         JobParameters jobParameters = new JobParametersBuilder().addLong("leftAge", 12L).toJobParameters();
-        JobExecution jobExecution = jobLauncher.run(mybatisPagingJob, jobParameters);
-
+        Job job = SpringBeanUtil.getBean("mybatisPagingDemo-Job",Job.class);
+        JobExecution jobExecution = jobLauncher.run(job, jobParameters);
+        Assert.assertEquals(jobExecution.getStatus(),BatchStatus.COMPLETED);
     }
 
     @Test
@@ -41,8 +39,9 @@ public class BaseTest {
             .addLong("leftAge", 11L)
             .addLong("rightAge", 17L)
             .toJobParameters();
-        Job job = SpringBeanUtil.getBean("compositeReaderJob",Job.class);
+        Job job = SpringBeanUtil.getBean("",Job.class);
         JobExecution jobExecution = jobLauncher.run(job, jobParameters);
+        Assert.assertEquals(jobExecution.getStatus(),BatchStatus.COMPLETED);
     }
 
     @Test
@@ -51,7 +50,9 @@ public class BaseTest {
             .addLong("leftAge", 11L)
             .addLong("rightAge", 17L)
             .toJobParameters();
-        JobExecution jobExecution = jobLauncher.run(multiReaderJob, jobParameters);
+        Job job = SpringBeanUtil.getBean("",Job.class);
+        JobExecution jobExecution = jobLauncher.run(job, jobParameters);
+        Assert.assertEquals(jobExecution.getStatus(),BatchStatus.COMPLETED);
     }
 
     //todo:这个job目前会无限循环,因为插入的数据导致下次会被读取出来
@@ -61,7 +62,7 @@ public class BaseTest {
             .addLong("leftId", 11L)
             .addLong("rightRight", 17L)
             .toJobParameters();
-        Job job = SpringBeanUtil.getBean("compositeWriterJob",Job.class);
+        Job job = SpringBeanUtil.getBean("",Job.class);
         JobExecution jobExecution = jobLauncher.run(job, jobParameters);
         Assert.assertEquals(jobExecution.getStatus(),BatchStatus.COMPLETED);
     }
@@ -81,6 +82,13 @@ public class BaseTest {
             .addLong("rightId", 17L)
             .toJobParameters();
         JobExecution jobExecution = jobLauncher.run(job, jobParameters);
+        Assert.assertEquals(jobExecution.getStatus(),BatchStatus.COMPLETED);
+    }
+
+    @Test
+    public void testTxSimpleJob() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+        Job job = SpringBeanUtil.getBean("txSimpleJob",Job.class);
+        JobExecution jobExecution = jobLauncher.run(job, emptyJobParameters);
         Assert.assertEquals(jobExecution.getStatus(),BatchStatus.COMPLETED);
     }
 

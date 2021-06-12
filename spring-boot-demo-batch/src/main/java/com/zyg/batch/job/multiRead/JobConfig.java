@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 
-@Configuration("multiReadJobConfig")
+@Configuration("multiReadDemo-JobConfig")
 @Slf4j
 public class JobConfig {
     @Autowired
@@ -26,9 +26,9 @@ public class JobConfig {
     /**
      * 编排 - 定义Step,将ItemReader、ItemProcess、ItemWriter编排到一起
      */
-    @Bean("multiReaderStep")
+    @Bean("multiReadDemo-Step")
     public Step mybatisPagingStep(){
-        return  stepBuilderFactory.get("multiReaderStep")
+        return  stepBuilderFactory.get("multiReadDemo-Step")
             .chunk(2)
             .reader(new AggregateReader())
             .processor(new AggregateProcessor())
@@ -39,9 +39,9 @@ public class JobConfig {
     /**
      * 编排 - 定义Job,将Step编排到一起
      */
-    @Bean("multiReaderJob")
+    @Bean("multiReadDemo-Job")
     public Job mybatisPagingJob(){
-        return jobBuilderFactory.get("multiReaderJob")
+        return jobBuilderFactory.get("multiReadDemo-Job")
             .start(mybatisPagingStep())
             .build();
     }

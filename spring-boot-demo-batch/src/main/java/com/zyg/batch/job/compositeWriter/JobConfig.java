@@ -32,7 +32,7 @@ import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 import java.util.HashMap;
 import java.util.Map;
 
-@Configuration("compositeWriterJobConfig")
+@Configuration("compositeWriterDemo-JobConfig")
 @Slf4j
 public class JobConfig {
     @Autowired
@@ -45,7 +45,7 @@ public class JobConfig {
     private PlatformTransactionManager txManager;
 
     @StepScope
-    @Bean("compositeWriterReader")
+    @Bean("compositeWriterDemo-Reader")
     public ItemReader<User> reader(@Value("#{jobParameters[leftId]}")Long leftId, @Value("#{jobParameters[rightId]}")Long rightId){
         MyBatisPagingItemReader<User> reader = new MyBatisPagingItemReader<>();
         reader.setSqlSessionFactory(sqlSessionFactory);
@@ -57,25 +57,25 @@ public class JobConfig {
         return reader;
     }
 
-    @Bean("i1")
-    public ItemWriter i1(){
+    @Bean("compositeWriterDemo-Writer1")
+    public ItemWriter writer1(){
         return new InnerWriter1();
     }
 
-    @Bean("i2")
-    public InnerWriter2 i2(){
+    @Bean("compositeWriterDemo-Writer2")
+    public InnerWriter2 writer2(){
         return new InnerWriter2();
     }
 
-    @Bean("compositeWriterOutWriter")
+    @Bean("compositeWriterDemo-OutWriter")
     public ItemWriter<User> compositeWriters(){
         OutWriter<User> outWriter = new OutWriter<>();
-        outWriter.setInnerWriter1(i1());
-        outWriter.setInnerWriter2(i2());
+        outWriter.setInnerWriter1(writer1());
+        outWriter.setInnerWriter2(writer2());
         return outWriter;
     }
 
-    @Bean
+    @Bean("compositeWriterDemo-Processor")
     public ItemProcessor processor(){
         return new Processor();
     }
@@ -83,14 +83,14 @@ public class JobConfig {
     /**
      * 编排 - 定义Step,将ItemReader、ItemProcess、ItemWriter编排到一起
      */
-    @Bean("compositeWriterStep")
+    @Bean("compositeWriterDemo-Step")
     public Step mybatisPagingStep(){
         DefaultTransactionAttribute txAttribute = new DefaultTransactionAttribute();
         txAttribute.setPropagationBehavior(Propagation.NESTED.value());
         txAttribute.setIsolationLevel(Isolation.REPEATABLE_READ.value());
         txAttribute.setTimeout(10);
 
-        TaskletStep step = stepBuilderFactory.get("compositeWriterStep")
+        TaskletStep step = stepBuilderFactory.get("compositeWriterDemo-Step")
             .chunk(2)
             .reader(reader(null,null))
             .processor(processor())
@@ -105,9 +105,9 @@ public class JobConfig {
     /**
      * 编排 - 定义Job,将Step编排到一起
      */
-    @Bean("compositeWriterJob")
+    @Bean("compositeWriterDemo-Job")
     public Job mybatisPagingJob(){
-        return jobBuilderFactory.get("compositeWriterJob")
+        return jobBuilderFactory.get("compositeWriterDemo-Job")
             .start(mybatisPagingStep())
             .build();
     }

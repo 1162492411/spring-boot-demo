@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * @author zyg
  */
-@Configuration
+@Configuration("compositeReaderDemo-JobConfig")
 @Slf4j
 public class CompositeReaderJobConfig {
     @Autowired
@@ -27,7 +27,7 @@ public class CompositeReaderJobConfig {
     private StepBuilderFactory stepBuilderFactory;
 
     @StepScope
-    @Bean("compositeReaderOutReader")
+    @Bean("compositeReaderDemo-OutReader")
     public ItemReader<User> compositeReaderOutReader(@Value("#{jobParameters[leftAge]}")Long leftAge,@Value("#{jobParameters[rightAge]}")Long rightAge){
         OutReader outReader = new OutReader();
         outReader.setLeftAge(leftAge == null ? 0 : leftAge.intValue());
@@ -39,9 +39,9 @@ public class CompositeReaderJobConfig {
     /**
      * 编排 - 定义Step,将ItemReader、ItemProcess、ItemWriter编排到一起
      */
-    @Bean("compositeReaderStep")
+    @Bean("compositeReaderDemo-Step")
     public Step mybatisPagingStep(){
-        return  stepBuilderFactory.get("compositeReaderStep")
+        return  stepBuilderFactory.get("compositeReaderDemo-Step")
             .chunk(2)
             .reader(compositeReaderOutReader(null,null))
             .processor(new SimpleProcessor())
@@ -53,9 +53,9 @@ public class CompositeReaderJobConfig {
     /**
      * 编排 - 定义Job,将Step编排到一起
      */
-    @Bean("compositeReaderJob")
+    @Bean("compositeReaderDemo-Job")
     public Job mybatisPagingJob(){
-        return jobBuilderFactory.get("compositeReaderJob")
+        return jobBuilderFactory.get("compositeReaderDemo-Job")
             .start(mybatisPagingStep())
             .build();
     }
