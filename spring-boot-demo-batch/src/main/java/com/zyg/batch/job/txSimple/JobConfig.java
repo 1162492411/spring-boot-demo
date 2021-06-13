@@ -62,6 +62,11 @@ public class JobConfig {
         });
     }
 
+    @Bean("txSimpleDemo-Writer")
+    public ItemWriter writer(){
+        return new Writer();
+    }
+
     /**
      * 编排 - 定义Step,将ItemReader、ItemProcess、ItemWriter编排到一起
      */
@@ -69,18 +74,18 @@ public class JobConfig {
     public Step mybatisPagingStep(){
         DefaultTransactionAttribute txAttribute = new DefaultTransactionAttribute();
         txAttribute.setPropagationBehavior(Propagation.REQUIRED.value());
-        txAttribute.setIsolationLevel(Isolation.REPEATABLE_READ.value());
+        txAttribute.setIsolationLevel(Isolation.DEFAULT.value());
         txAttribute.setTimeout(10);
 
         TaskletStep step = stepBuilderFactory.get("txSimpleDemo-Step")
             .chunk(2)
             .reader(reader())
             .processor(processor())
-            .writer(new TxSimpleWriter())
+            .writer(writer())
             .build();
         //配置事务
-//        step.setTransactionManager(txManager);
-//        step.setTransactionAttribute(txAttribute);
+        step.setTransactionManager(txManager);
+        step.setTransactionAttribute(txAttribute);
         return step;
     }
 

@@ -11,10 +11,11 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-public class TxSimpleWriter implements ItemWriter<Teacher> {
+public class Writer implements ItemWriter<Teacher> {
     @Autowired
     private TeacherMapper teacherMapper;
 
+    //目前这种方式会报错，Cannot change the ExecutorType when there is an existing transaction
     @Override
     public void write(List<? extends Teacher> list) throws Exception {
         if(CollectionUtils.isEmpty(list)){

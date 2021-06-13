@@ -74,9 +74,13 @@ public class BaseTest {
         Assert.assertEquals(jobExecution.getStatus(),BatchStatus.COMPLETED);
     }
 
+    /**
+     * List全套处理
+     * @See com.zyg.batch.job.commonMultiDemo
+     */
     @Test
     public void testCommonMultiDemoJobConfig() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
-        Job job = SpringBeanUtil.getBean("commonMultiDemoJob",Job.class);
+        Job job = SpringBeanUtil.getBean("commonMultiDemo-Job",Job.class);
         JobParameters jobParameters = new JobParametersBuilder()
             .addLong("leftId", 11L)
             .addLong("rightId", 17L)
@@ -85,9 +89,10 @@ public class BaseTest {
         Assert.assertEquals(jobExecution.getStatus(),BatchStatus.COMPLETED);
     }
 
+    //事务 - 目前失败
     @Test
     public void testTxSimpleJob() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
-        Job job = SpringBeanUtil.getBean("txSimpleJob",Job.class);
+        Job job = SpringBeanUtil.getBean("txSimpleDemo-Job",Job.class);
         JobExecution jobExecution = jobLauncher.run(job, emptyJobParameters);
         Assert.assertEquals(jobExecution.getStatus(),BatchStatus.COMPLETED);
     }
