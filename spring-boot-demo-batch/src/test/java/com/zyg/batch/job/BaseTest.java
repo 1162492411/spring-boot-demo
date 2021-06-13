@@ -97,5 +97,16 @@ public class BaseTest {
         Assert.assertEquals(jobExecution.getStatus(),BatchStatus.COMPLETED);
     }
 
+    /**
+     * 业务校验Step失败时整个Job提前终止示例
+     * @See com.zyg.batch.job.onceStepNotSucessDemo
+     */
+    @Test
+    public void testOnceStepNotSuccessJob() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+        Job job = SpringBeanUtil.getBean("onceStepNotSuccessDemo-Job",Job.class);
+        JobExecution jobExecution = jobLauncher.run(job, emptyJobParameters);
+        Assert.assertEquals(jobExecution.getStatus(),BatchStatus.COMPLETED);
+    }
+
 
 }
