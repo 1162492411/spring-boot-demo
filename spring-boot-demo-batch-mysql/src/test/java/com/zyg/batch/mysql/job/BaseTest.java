@@ -43,18 +43,22 @@ public class BaseTest {
         Assert.assertEquals(jobExecution.getStatus(),BatchStatus.COMPLETED);
     }
 
+
+    /**
+     * 测试executeType
+     * 结果 1.在mp+xml中时会报错Cannot change the ExecutorType when there is an existing transaction
+     * 2.在mp+service时不会报错可以正常执行
+     * 建议debug第一种方式,或者采用其他只使用mybatis的方式进行对比测试，看一下是哪个地方修改了executeType
+     *
+     */
     @Test
-    @Rollback(value = false)
-    public void testTx() throws Exception {
-        for (int i = 0; i < 3; i++) {
-            List<Teacher> teacherList = new ArrayList<>();
-            for (int j = 0; j < 2; j++) {
-                Teacher teacher = new Teacher();
-                teacher.setName("mock" + (j+1) + i * 10);
-                teacherList.add(teacher);
-            }
-            teacherService.saveBatch(teacherList);
-        }
+    public void testExecuteTypeJob() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+        Job job = SpringBeanUtil.getBean("executeTypeDemo-Job",Job.class);
+        JobParameters jobParameters = new JobParametersBuilder()
+            .addLong("randomKey",System.currentTimeMillis())
+            .toJobParameters();
+        JobExecution jobExecution = jobLauncher.run(job, jobParameters);
+        Assert.assertEquals(jobExecution.getStatus(),BatchStatus.COMPLETED);
     }
 
 
