@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyg.batch.mysql.mapper.UserMapper">
+  <resultMap id="BaseResultMap" type="com.zyg.batch.mysql.entity.User">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="age" jdbcType="VARCHAR" property="age" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name, age, email
+  </sql>
+
+  <select id="selectByBatchPage" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user ORDER BY id ASC LIMIT #{_skiprows}, #{_pagesize}
+  </select>
+
+  <select id="selectByAgeLeft" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user where age &gt;= #{ageLeft}
+    ORDER BY id ASC LIMIT #{_skiprows}, #{_pagesize}
+  </select>
+
+  <select id="selectByAgeRange" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user where age &gt;= #{ageLeft} and age &lt;= #{ageRight}
+    ORDER BY id ASC LIMIT #{_skiprows}, #{_pagesize}
+  </select>
+
+  <select id="selectByIdRange" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user where id &gt;= #{idLeft} and id &lt;= #{idRight}
+    ORDER BY id ASC LIMIT #{_skiprows}, #{_pagesize}
+  </select>
+
+
+
+</mapper>
