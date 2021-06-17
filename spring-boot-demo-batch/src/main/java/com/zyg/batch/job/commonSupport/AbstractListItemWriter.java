@@ -11,14 +11,12 @@ public abstract class AbstractListItemWriter<K> implements ItemWriter<List<K>>{
 
     @Override
     public void write(List<? extends List<K>> items) {
-        beforeWrite();
         if(items.isEmpty()){
             return;
         }
         for (List<K> item : items) {
             doWrite(item);
         }
-        afterWrite();
     }
 
     /**
@@ -26,19 +24,5 @@ public abstract class AbstractListItemWriter<K> implements ItemWriter<List<K>>{
      * @param item
      */
     abstract protected void  doWrite(List<? extends K> item);
-
-    /**
-     * 扩展点 - 留给子类实现写入前的业务操作
-     */
-    protected void beforeWrite(){
-
-    }
-
-    /**
-     * 扩展点 - 留给子类实现写入后的业务操作
-     */
-    protected void afterWrite(){
-
-    }
 
 }
