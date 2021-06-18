@@ -10,9 +10,12 @@ spring:
     initialize-schema: never
 
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
-    username: root
-    password: Mo20100528
+#    url: jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
+#    username: root
+#    password: Mo20100528
+    url: jdbc:mysql://mysql-cn-east-2-68fe65f17cd0460c.rds.jdcloud.com:3306/opt_quote?useUnicode=true&characterEncoding=UTF-8
+    username: ahs_user
+    password: 1s186XMPRvB9bTY2
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.zaxxer.hikari.HikariDataSource
     initialization-mode: always

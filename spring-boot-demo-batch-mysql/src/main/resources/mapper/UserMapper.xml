@@ -38,6 +38,56 @@
     ORDER BY id ASC LIMIT #{_skiprows}, #{_pagesize}
   </select>
 
+  <select id="selectSimple" resultMap="BaseResultMap">
+    select  <include refid="Base_Column_List" /> from user where id &lt; 5
+  </select>
+
+  <select id="selectNested" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" /> from user where id &lt; (select id from teacher where id &lt;= 5)
+  </select>
+
+  <select id="selectJoin" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user
+    left join teacher on user.id = teacher.id
+    where id &lt; (select id from user where id &lt;= 5)
+  </select>
+
+  <select id="selectJoinAlias" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user t1
+    left join teacher t2 on t1.id = t2.id
+    where t1.id &lt; (select id from user t3 where id &lt;= 5)
+  </select>
+
+  <select id="selectJoinAliasDual" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user t1
+    left join teacher t2 on t1.id = t2.id
+    where t1.id &lt; (select id from user t3 where id &lt;= (select 200 from dual))
+  </select>
+
+  <select id="selectJoinDualAlias" resultMap="BaseResultMap">
+    select * from user left join (select 1 as id from dual) t2 on user.id = t2.id
+  </select>
+
+  <select id="selectTableIndexAndMultiTable" resultMap="BaseResultMap">
+    select * from user force index (user_name_index) ,teacher
+  </select>
+
+  <select id="selectJoinAliasDualIndex" resultMap="BaseResultMap">
+    select
+      *
+    from user t1
+           left join attribute t2 on t1.id = t2.id
+    where t1.id >= (select id from user t3 where id >= (select 200 from dual))
+    group by t1.name ,t2.update_dt,t2.attribute_name
+    having t1.name is not null
+    order by t2.update_dt asc
+  </select>
 
 
 </mapper>

@@ -19,4 +19,6 @@ public interface TeacherMapper extends BaseMapper<Teacher> {
 
     List<Teacher> selectByIdRange(@Param("idLeft")Integer ageLeft,@Param("idRight")Integer ageRight,
                                @Param("_skiprows")Integer skipRows,@Param("_pagesize")Integer pageSize);
+
+    void insertFromUser();
 }
