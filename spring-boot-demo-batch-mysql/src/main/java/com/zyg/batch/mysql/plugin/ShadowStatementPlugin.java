@@ -1,4 +1,4 @@
-package com.zyg.batch.mysql.plugin;
+package com.zyg.batch.mysql.plugin;//package com.zyg.batch.mysql.plugin;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.zyg.batch.mysql.util.TableNameParser;
@@ -103,6 +103,7 @@ public class ShadowStatementPlugin implements Interceptor {
         //从原始SQL获取所有表名
         TableNameParser parser = new TableNameParser(sql);
         List<TableNameParser.SqlToken> names = new ArrayList<>();
+        //fixme : 目前无法正确解析 from a force index(xx),b这种情况
         parser.accept(names::add);
 
         StringBuilder builder = new StringBuilder();

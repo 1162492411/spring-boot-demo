@@ -71,7 +71,6 @@ public final class TableNameParser {
      *
      * @param visitor 访问者
      */
-    //fixme : 目前无法正确解析select * from a,b这种情况,仅能解析出a
     public void accept(TableNameVisitor visitor) {
         int index = 0;
         String first = tokens.get(index).getValue();
@@ -233,6 +232,7 @@ public final class TableNameParser {
         }
     }
 
+    //fixme : 这里目前只能判断出select * from a,b这种情况,无法正确解析select * from a force index(idx),b这种情况.在后者这种情况,a是当前sqlToken时nextToken是force
     private static boolean shouldProcessMultipleTables(final String nextToken) {
         return nextToken != null && nextToken.equals(TOKEN_COMMA);
     }

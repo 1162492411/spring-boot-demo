@@ -1,12 +1,7 @@
 package com.zyg.batch.mysql.config;
 
-import com.zyg.batch.mysql.plugin.ShadowStatementPlugin;
 import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
-import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -28,12 +23,5 @@ public class BatchConfig extends DefaultBatchConfigurer {
 //        factory.afterPropertiesSet();
 //        return factory.getObject();
 //    }
-
-//    @Bean
-//    public ShadowStatementPlugin shadowStatementPlugin(){
-//        return new ShadowStatementPlugin();
-//    }
-
-
 
 }
