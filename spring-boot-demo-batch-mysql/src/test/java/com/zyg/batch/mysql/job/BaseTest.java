@@ -61,6 +61,18 @@ public class BaseTest {
         Assert.assertEquals(jobExecution.getStatus(),BatchStatus.COMPLETED);
     }
 
+    /**
+     * 测试拦截器
+     */
+    @Test
+    public void testPluginJob() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+        Job job = SpringBeanUtil.getBean("pluginDemo-Job",Job.class);
+        JobParameters jobParameters = new JobParametersBuilder()
+            .addLong("randomKey",System.currentTimeMillis())
+            .toJobParameters();
+        JobExecution jobExecution = jobLauncher.run(job, jobParameters);
+        Assert.assertEquals(jobExecution.getStatus(),BatchStatus.COMPLETED);
+    }
 
 
 }

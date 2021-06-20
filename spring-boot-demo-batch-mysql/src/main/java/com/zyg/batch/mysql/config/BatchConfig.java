@@ -1,5 +1,6 @@
 package com.zyg.batch.mysql.config;
 
+import com.zyg.batch.mysql.plugin.ShadowStatementPlugin;
 import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
@@ -19,14 +20,20 @@ public class BatchConfig extends DefaultBatchConfigurer {
     private DataSource dataSource;
 
     //将spring batch 的记录存取在主数据源中
-    @Override
-    protected JobRepository createJobRepository() throws Exception {
-        JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
-        factory.setDataSource(dataSource);
-        factory.setTransactionManager(this.getTransactionManager());
-        factory.afterPropertiesSet();
-        return factory.getObject();
-    }
+//    @Override
+//    protected JobRepository createJobRepository() throws Exception {
+//        JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
+//        factory.setDataSource(dataSource);
+//        factory.setTransactionManager(this.getTransactionManager());
+//        factory.afterPropertiesSet();
+//        return factory.getObject();
+//    }
+
+//    @Bean
+//    public ShadowStatementPlugin shadowStatementPlugin(){
+//        return new ShadowStatementPlugin();
+//    }
+
 
 
 }

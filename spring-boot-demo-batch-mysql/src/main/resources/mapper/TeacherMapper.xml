@@ -30,5 +30,8 @@
     from teacher where id &gt;= #{idLeft} and id &lt;= #{idRight}
     ORDER BY id ASC LIMIT #{_skiprows}, #{_pagesize}
   </select>
+  <insert id="insertFromUser">
+    insert into teacher select * from user
+  </insert>
 
 </mapper>

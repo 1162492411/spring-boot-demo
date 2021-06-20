@@ -20,4 +20,20 @@ public interface UserMapper extends BaseMapper<User> {
     List<User> selectByIdRange(@Param("idLeft")Integer ageLeft,@Param("idRight")Integer ageRight,
                                 @Param("_skiprows")Integer skipRows,@Param("_pagesize")Integer pageSize);
 
+    List<User> selectSimple();
+
+    List<User> selectNested();
+
+    List<User> selectJoin();
+
+    List<User> selectJoinAlias();
+
+    List<User> selectJoinAliasDual();
+
+    List<User> selectJoinDualAlias();
+
+    List<User> selectTableIndexAndMultiTable();
+
+    List<User> selectJoinAliasDualIndex();
+
 }

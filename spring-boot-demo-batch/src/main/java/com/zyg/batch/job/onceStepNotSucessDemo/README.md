@@ -3,7 +3,7 @@
 ## 背景
 通常情况下我们会存在一些任务参数校验的业务场景，这些校验包含两部分: 值校验及业务校验。值校验的逻辑比较简单，通常情况下如果任务参数包装在JobParameters中，我们可以通过对JobParameters进行ParameterValidation满足我们的业务诉求，但是业务校验则需要手动在reader/listener中进行校验，如果业务校验不通过那么我们期望整个Job停止运行。而实际编码中通常会存在多个step，因此我们希望能够找到一种方式，使得step中业务校验不通过时整个job停止运行
 
-## 切入点寻找
+## Job级别切入点寻找
 通常我们这样配置Job
 ```java
 class JobConfig{
@@ -111,7 +111,21 @@ class FlowJob{
 ```
 因此在这种方式下，可以考虑通过这几个切入点来满足我们的业务诉求
 
-## SimpleJob切入点示例
+## Step级别切入点寻找
+在SimpleJob/SimpleFlow的核心代码中,在执行step时,最终都是通过this.stepHandler.handleStep(step, execution)来委托执行Step,该方法最终会调用AbstractStep.execute()方法,AbstractStep是所有Step的父类，在该类中,存在这样一处代码
+```java
+class 该方法最终会调用AbstractStep{
+  public final void execute(StepExecution stepExecution) throws JobInterruptedException, UnexpectedJobExecutionException {
+      if (stepExecution.isTerminateOnly()) {
+        throw new JobInterruptedException("JobExecution interrupted.");
+      }
+  }
+}
+```
+因此，我们也可以在Step中通过修改terminateOnly字段的值来满足我们的业务诉求。注意 ：这种方式下,如果在Step中间部分修改了该字段的值,仍然会继续执行该Step的代码直到该Step结束，因此如果通过该切入点，需要各位开发根据实际的业务场景来判断是否需要提前结束该Step中的后半部分代码
+
+## 切入点示例
+### SimpleJob切入点示例
 ReaderOne中，
 1）将校验结果放在成员变量canExecute中；
 2）继承ItemReader，在read方法中实现业务校验逻辑，校验结果记录在canExecute变量；
@@ -119,5 +133,8 @@ ReaderOne中，
 
 这样，在构造Job时，我们只需要将第一个Step指定为ReaderOne，即可满足业务诉求
 
-## SimpleFlow切入点示例
+### SimpleFlow切入点示例
+略,遇到业务场景时再行实验
+
+### Step的terminateOnly切入点示例
 略,遇到业务场景时再行实验
