@@ -23,4 +23,10 @@ public interface UserMapper extends BaseMapper<User> {
     List<User> selectByIdRange(@Param("idLeft")Integer ageLeft,@Param("idRight")Integer ageRight,
                                 @Param("_skiprows")Integer skipRows,@Param("_pagesize")Integer pageSize);
 
+    Integer selectMinId();
+
+    Integer selectMaxId();
+
+
+
 }

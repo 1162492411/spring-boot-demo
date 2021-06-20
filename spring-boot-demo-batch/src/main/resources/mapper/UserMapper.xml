@@ -38,6 +38,13 @@
     ORDER BY id ASC LIMIT #{_skiprows}, #{_pagesize}
   </select>
 
+  <select id="selectMinId" resultType="java.lang.Integer">
+    select min(id) from user
+  </select>
+
+  <select id="selectMaxId" resultType="java.lang.Integer">
+    select max(id) from user
+  </select>
 
 
 </mapper>
