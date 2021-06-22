@@ -12,9 +12,12 @@ import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.Select;
+import net.sf.jsqlparser.statement.select.SelectVisitor;
 import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.util.deparser.ExpressionDeParser;
+import net.sf.jsqlparser.util.deparser.InsertDeParser;
 import net.sf.jsqlparser.util.deparser.SelectDeParser;
+import net.sf.jsqlparser.util.deparser.UpdateDeParser;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.plugin.*;
@@ -30,7 +33,7 @@ import java.util.Properties;
 /**
  * @author pengpeng
  */
-//@Component
+//@Component("shadowStatementPlugin")
 //@Intercepts({
 //    @Signature(type = StatementHandler.class, method = "prepare", args = {
 //        Connection.class, Integer.class})})
@@ -65,36 +68,40 @@ public class ShadowStatementPluginPP implements Interceptor {
             log.info("修改前sql：{}", originalSql);
 
             StringBuilder buffer = new StringBuilder();
-            ExpressionDeParser expressionDeParser = new ExpressionDeParser();
-            SelectDeParser changeTableParser = new MySelectDeParser(expressionDeParser, buffer);
-            expressionDeParser.setSelectVisitor(changeTableParser);
-            expressionDeParser.setBuffer(buffer);
-
             Statement statement = CCJSqlParserUtil.parse(originalSql);
 
-
             if(statement instanceof Select){
+                ExpressionDeParser expressionDeParser = new ExpressionDeParser();
+                SelectDeParser changeTableParser = new MySelectDeParser(expressionDeParser, buffer);
+                expressionDeParser.setSelectVisitor(changeTableParser);
+                expressionDeParser.setBuffer(buffer);
+
+
                 ((Select) statement).getSelectBody().accept(changeTableParser);
             }
-            //todo:目前下边几种存在问题,会将sql解析错
-//            else if(statement instanceof Insert){
-//                Insert insert = (Insert)statement;
-//                insert.getTable().accept(changeTableParser);
-//                if(insert.getSelect() != null && insert.getSelect().getSelectBody() != null){
-//                    insert.getSelect().getSelectBody().accept(changeTableParser);
-//                }
-//            }else if(statement instanceof Update){
+            else if(statement instanceof Insert){
+                ExpressionDeParser deParser = new ExpressionDeParser();
+                SelectDeParser selectDeParser = new MySelectDeParser(deParser,buffer);
+
+                Insert insert = (Insert)statement;
+                String originTableName = insert.getTable().getName();
+                insert.getTable().setName(originTableName + "_bakkk");
+                if(insert.getSelect() != null && insert.getSelect().getSelectBody() != null){
+                    insert.getSelect().getSelectBody().accept(selectDeParser);
+                }
+            }else if(statement instanceof Update){
+//                UpdateDeParser
 //                Update update = (Update)statement;
 //                update.getTable().accept(changeTableParser);
 //                if(update.getSelect() != null && update.getSelect().getSelectBody() != null){
 //                    update.getSelect().getSelectBody().accept(changeTableParser);
 //                }
-//                //joins、startJoins是什么
-//            }else if(statement instanceof Delete){
+                //joins、startJoins是什么
+            }else if(statement instanceof Delete){
 //                Delete delete = (Delete) statement;
 //                delete.getTable().accept(changeTableParser);
-//                //tables、joins是什么
-//            }
+                //tables、joins是什么
+            }
             metaStatementHandler.setValue("delegate.boundSql.sql", buffer.toString());
             log.info("修改后sql：{}", buffer);
         }
@@ -142,5 +149,6 @@ public class ShadowStatementPluginPP implements Interceptor {
         }
 
     }
+
 
 }

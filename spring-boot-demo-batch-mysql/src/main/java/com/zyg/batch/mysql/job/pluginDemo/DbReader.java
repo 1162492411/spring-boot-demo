@@ -24,7 +24,7 @@ public class DbReader extends AbstractPeekWholeSingleListReader<User> {
         //测试3 : join
 //        return userMapper.selectJoin();
         //测试4 : join + 别名
-//        return userMapper.selectJoinAlias();
+        return userMapper.selectJoinAlias();
         //测试5 : join + 别名 + dual
 //        return userMapper.selectJoinAliasDual();
         //测试6 : join + dual + 别名
@@ -35,9 +35,9 @@ public class DbReader extends AbstractPeekWholeSingleListReader<User> {
 //        return userMapper.selectJoinAliasDualIndex();
 
 //        测试last : 配合测试writer,先返回模拟数据;
-        List<User> innerList1 = new ArrayList<>();
-        innerList1.add(User.builder().id(101).build());
-        innerList1.add(User.builder().id(102).build());
-        return innerList1;
+//        List<User> innerList1 = new ArrayList<>();
+//        innerList1.add(User.builder().id(101).build());
+//        innerList1.add(User.builder().id(102).build());
+//        return innerList1;
     }
 }

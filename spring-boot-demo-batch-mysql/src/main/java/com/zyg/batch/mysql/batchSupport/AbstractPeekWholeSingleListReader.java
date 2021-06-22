@@ -1,5 +1,7 @@
 package com.zyg.batch.mysql.batchSupport;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.support.AbstractItemCountingItemStreamItemReader;
@@ -19,16 +21,12 @@ import static org.springframework.util.ClassUtils.getShortName;
 public abstract class AbstractPeekWholeSingleListReader<T> extends AbstractItemCountingItemStreamItemReader<List<T>> implements InitializingBean {
     protected Log logger = LogFactory.getLog(getClass());
 
-    protected volatile List<T> results;
+//    protected volatile List<T> results;
 
     /**
      * 作用是防止重复打开ItemStream
      */
     private volatile boolean initialized = false;
-    /**
-     * 作用是标记是否已经填充一次业务数据
-     */
-    private volatile boolean filled = false;
     /**
      * 作用是加锁(可替换为轻量级的ReentrantLock)
      */
@@ -39,27 +37,12 @@ public abstract class AbstractPeekWholeSingleListReader<T> extends AbstractItemC
     }
 
     @Override
-    protected List<T> doRead() {
+    protected List<T> doRead() throws JsonProcessingException {
         synchronized (lock) {
             logger.debug("read data");
-            try {
-                //初次填充数据
-                if (!filled) {
-                    logger.debug("real read data");
-                    this.results = new ArrayList<>();
-                    this.results.addAll(doReadPage());
-                    filled = true;
-                }
-                logger.debug("return data");
-                return results == null || results.isEmpty() ? null : results;
-            }
-            finally {
-                //读完数据后重置results,会被执行两次,因此batch框架需要再读一次以便知道是否存在更多数据
-                if (filled) {
-                    logger.debug("reset field value");
-                    results = null;
-                }
-            }
+            List<T> list = doReadPage();
+            logger.error("return data : " + new ObjectMapper().writeValueAsString(list));
+            return list;
         }
     }
 
@@ -80,8 +63,7 @@ public abstract class AbstractPeekWholeSingleListReader<T> extends AbstractItemC
     protected void doClose() {
         synchronized (lock) {
             initialized = false;
-            filled = false;
-            results = null;
+//            results = null;
         }
     }
 
