@@ -23,4 +23,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public List<User> selectByIdRange(Integer idLeft, Integer idRight, Integer skipRows, Integer pageSize) {
         return userMapper.selectByIdRange(idLeft,idRight,skipRows,pageSize);
     }
+
+
+    @Override
+    public Integer selectMinId() {
+        return userMapper.selectMinId();
+    }
+
+    @Override
+    public Integer selectMaxId() {
+        return userMapper.selectMaxId();
+    }
 }

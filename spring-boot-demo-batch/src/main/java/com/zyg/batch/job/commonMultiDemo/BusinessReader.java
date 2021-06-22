@@ -1,13 +1,13 @@
 package com.zyg.batch.job.commonMultiDemo;
 
 import com.zyg.batch.entity.User;
-import com.zyg.batch.job.commonSupport.AbstractListItemReader;
+import com.zyg.batch.job.commonSupport.AbstractPeekPagingListReader;
 import com.zyg.batch.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-public class BusinessReader<K> extends AbstractListItemReader<User> {
+public class BusinessReader<K> extends AbstractPeekPagingListReader<User> {
 
     @Autowired
     private IUserService userService;

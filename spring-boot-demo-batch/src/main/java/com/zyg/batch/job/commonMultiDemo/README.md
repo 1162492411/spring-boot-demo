@@ -11,7 +11,7 @@
 鉴于此，开发一套reader、processor、writer，使得数据处理流程为 : 读取一页数据 - process(List) - write，开发人员无需关注List<T>,无需关注——skipRows的计算逻辑，无需调用及改写Mapper.xml
 
 ## 组件
-com.zyg.batch.job.commonSupport.AbstractListItemReader<K>
+com.zyg.batch.job.commonSupport.AbstractPeekPagingListReader<K>
 com.zyg.batch.job.commonSupport.AbstractListItemProcessor<J,K>
 com.zyg.batch.job.commonSupport.AbstractListItemWriter<K>
 

@@ -2,7 +2,6 @@ package com.zyg.batch.job.commonSupport;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.support.AbstractItemCountingItemStreamItemReader;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -15,7 +14,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * @author zyg
  */
-public abstract class AbstractListItemReader<K> extends AbstractItemCountingItemStreamItemReader<List<K>> implements InitializingBean {
+public abstract class AbstractPeekPagingListReader<K> extends AbstractItemCountingItemStreamItemReader<List<K>> implements InitializingBean {
     protected Log logger = LogFactory.getLog(getClass());
 
     private volatile boolean initialized = false;
@@ -32,8 +31,8 @@ public abstract class AbstractListItemReader<K> extends AbstractItemCountingItem
 
     private Object lock = new Object();
 
-    public AbstractListItemReader() {
-        setName(ClassUtils.getShortName(AbstractListItemReader.class));
+    public AbstractPeekPagingListReader() {
+        setName(ClassUtils.getShortName(AbstractPeekPagingListReader.class));
     }
 
     /**

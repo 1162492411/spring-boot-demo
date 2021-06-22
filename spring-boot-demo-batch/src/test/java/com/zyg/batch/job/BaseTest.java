@@ -108,5 +108,15 @@ public class BaseTest {
         Assert.assertEquals(jobExecution.getStatus(),BatchStatus.COMPLETED);
     }
 
+    /**
+     *
+     */
+    @Test
+    public void testBusinessSinglePagingSingleJob() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+        Job job = SpringBeanUtil.getBean("businessSinglePagingSingle-Job",Job.class);
+        JobExecution jobExecution = jobLauncher.run(job, emptyJobParameters);
+        Assert.assertEquals(jobExecution.getStatus(),BatchStatus.COMPLETED);
+    }
+
 
 }
