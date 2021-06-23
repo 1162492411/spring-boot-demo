@@ -125,13 +125,17 @@ class 该方法最终会调用AbstractStep{
 因此，我们也可以在Step中通过修改terminateOnly字段的值来满足我们的业务诉求。注意 ：这种方式下,如果在Step中间部分修改了该字段的值,仍然会继续执行该Step的代码直到该Step结束，因此如果通过该切入点，需要各位开发根据实际的业务场景来判断是否需要提前结束该Step中的后半部分代码
 
 ## 切入点示例
-### SimpleJob切入点示例
+### SimpleJob切入点示例1
 ReaderOne中，
 1）将校验结果放在成员变量canExecute中；
 2）继承ItemReader，在read方法中实现业务校验逻辑，校验结果记录在canExecute变量；
 3）继承StepExecutionListener，在afterStep中根据canExecute的值修改StepExecution的BatchStatus为成功以外的其他值
 
 这样，在构造Job时，我们只需要将第一个Step指定为ReaderOne，即可满足业务诉求
+
+### SimpleJob切入点示例2
+按照示例1的思路,直接抽取一个父类做一些公共逻辑,这样开发人员只需要继承该父类即可
+详见AbstractValidateTasklet
 
 ### SimpleFlow切入点示例
 略,遇到业务场景时再行实验

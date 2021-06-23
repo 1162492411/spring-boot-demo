@@ -11,6 +11,7 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.support.PassThroughItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,16 +33,28 @@ public class JobConfig {
     @Autowired
     private StepBuilderFactory stepBuilderFactory;
 
+//    /**
+//     * 示例1 - 编排 - 定义Step,将ItemReader、ItemProcess、ItemWriter编排到一起
+//     */
+//    @Bean("onceStepNotSuccessDemo-Step1")
+//    public Step step1(){
+//        return  stepBuilderFactory.get("onceStepNotSuccessDemo-Step1")
+//            .chunk(1)
+//            .reader(new ReaderOne())
+//            .processor(new PassThroughItemProcessor<>())
+//            .writer(new EmptyWriter())
+//            .build();
+//    }
+
+
     /**
-     * 编排 - 定义Step,将ItemReader、ItemProcess、ItemWriter编排到一起
+     * 示例2 - 校验Step - 校验并准备数据
+     * @return
      */
     @Bean("onceStepNotSuccessDemo-Step1")
     public Step step1(){
         return  stepBuilderFactory.get("onceStepNotSuccessDemo-Step1")
-            .chunk(1)
-            .reader(new ReaderOne())
-            .processor(new PassThroughItemProcessor<>())
-            .writer(new EmptyWriter())
+            .tasklet(new BusinessTasklet())
             .build();
     }
 

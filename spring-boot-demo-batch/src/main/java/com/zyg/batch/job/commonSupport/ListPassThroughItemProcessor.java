@@ -1,6 +1,6 @@
 package com.zyg.batch.job.commonSupport;
 
-import com.zyg.batch.job.commonSupport.AbstractListItemProcessor;
+
 
 /**
  * @author zyg

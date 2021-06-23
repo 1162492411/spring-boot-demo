@@ -104,8 +104,14 @@ public class BaseTest {
     @Test
     public void testOnceStepNotSuccessJob() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
         Job job = SpringBeanUtil.getBean("onceStepNotSuccessDemo-Job",Job.class);
-        JobExecution jobExecution = jobLauncher.run(job, emptyJobParameters);
+        JobParameters jobParameters = new JobParametersBuilder().addString("rands","222" ).toJobParameters();
+        JobExecution jobExecution = jobLauncher.run(job, jobParameters);
         Assert.assertEquals(jobExecution.getStatus(),BatchStatus.COMPLETED);
+
+
+        JobParameters jobParameters2 = new JobParametersBuilder().addString("rands","333" ).toJobParameters();
+        JobExecution jobExecution2 = jobLauncher.run(job, jobParameters2);
+        Assert.assertEquals(jobExecution2.getStatus(),BatchStatus.COMPLETED);
     }
 
     /**
