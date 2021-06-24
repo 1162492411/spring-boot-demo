@@ -1,10 +1,13 @@
 package com.zyg.batch.job.commonSupport;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.support.AbstractItemCountingItemStreamItemReader;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,53 +16,41 @@ import static org.springframework.util.ClassUtils.getShortName;
 
 /**
  * 一次性填充业务List,一次性弹出业务List,子类继承该类,在doReadPage()中返回业务List即可
- *
+ *  该类实现了锁用于多线程reader，实现了InitializingBean以便解决该类被Spring托管的问题，实现了ItemStream的相关方法
  * @author zyg
  */
-public abstract class AbstractPeekWholeSingleListReader<T> extends AbstractItemCountingItemStreamItemReader<List<T>> implements InitializingBean {
+public abstract class AbstractPeekWholeListReader<T> extends AbstractItemCountingItemStreamItemReader<List<T>> implements InitializingBean {
     protected Log logger = LogFactory.getLog(getClass());
-
-    protected volatile List<T> results;
 
     /**
      * 作用是防止重复打开ItemStream
      */
     private volatile boolean initialized = false;
-    /**
-     * 作用是标记是否已经填充一次业务数据
-     */
-    private volatile boolean filled = false;
+    private volatile boolean hasFilled = false;
+
     /**
      * 作用是加锁(可替换为轻量级的ReentrantLock)
      */
     private Object lock = new Object();
 
-    public AbstractPeekWholeSingleListReader() {
-        setName(getShortName(AbstractPeekWholeSingleListReader.class));
+    public AbstractPeekWholeListReader() {
+        setName(getShortName(AbstractPeekWholeListReader.class));
     }
 
     @Override
-    protected List<T> doRead() {
+    protected List<T> doRead() throws JsonProcessingException {
         synchronized (lock) {
+            if(hasFilled){
+                hasFilled = false;
+                return null;
+            }
             logger.debug("read data");
-            try {
-                //初次填充数据
-                if (!filled) {
-                    logger.debug("real read data");
-                    this.results = new ArrayList<>();
-                    this.results.addAll(doReadPage());
-                    filled = true;
-                }
-                logger.debug("return data");
-                return results == null || results.isEmpty() ? null : results;
+            List<T> list = doReadPage();
+            if(logger.isDebugEnabled()){
+                logger.debug("return data : " + new ObjectMapper().writeValueAsString(list));
             }
-            finally {
-                //读完数据后重置results,会被执行两次,因此batch框架需要再读一次以便知道是否存在更多数据
-                if (filled) {
-                    logger.debug("reset field value");
-                    results = null;
-                }
-            }
+            hasFilled = true;
+            return CollectionUtils.isEmpty(list) ? null : list;
         }
     }
 
@@ -80,8 +71,6 @@ public abstract class AbstractPeekWholeSingleListReader<T> extends AbstractItemC
     protected void doClose() {
         synchronized (lock) {
             initialized = false;
-            filled = false;
-            results = null;
         }
     }
 

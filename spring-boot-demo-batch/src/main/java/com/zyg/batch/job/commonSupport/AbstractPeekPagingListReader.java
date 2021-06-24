@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
+ * 分页读取插件,一次读取一页数据,一次弹出一页数据,子类在doReadPage中返回分页数据即可,其中分页得两个参数直接使用父类的getSkipRows()和getPageSize()
  * @author zyg
  */
 public abstract class AbstractPeekPagingListReader<K> extends AbstractItemCountingItemStreamItemReader<List<K>> implements InitializingBean {
@@ -25,7 +26,7 @@ public abstract class AbstractPeekPagingListReader<K> extends AbstractItemCounti
 
     private Map<String, Object> parameterValues;
 
-    private volatile int skipRows = 0;
+    private volatile int startNumber = 0;
 
     protected volatile List<K> results;
 
@@ -45,8 +46,8 @@ public abstract class AbstractPeekPagingListReader<K> extends AbstractItemCounti
     }
 
 
-    public int getSkipRows(){
-        return skipRows;
+    public int getStartNumber(){
+        return startNumber;
     }
 
     /**
@@ -85,6 +86,7 @@ public abstract class AbstractPeekPagingListReader<K> extends AbstractItemCounti
         Assert.isTrue(pageSize > 0, "pageSize must be greater than zero");
         //改动点
         Assert.isTrue(pageSize < 5_0000, "pageSize must be less than 50000");
+        Assert.isTrue(startNumber >= 0, "startNumber must be greater than zero");
     }
 
     //改动点
@@ -101,7 +103,7 @@ public abstract class AbstractPeekPagingListReader<K> extends AbstractItemCounti
             }
             this.results.addAll(doReadPage());
             page++;
-            skipRows += (results == null ? 0 : results.size());
+            startNumber += (results == null ? 0 : results.size());
             if(results == null || results.isEmpty()){
                 return null;
             }else{
@@ -126,7 +128,7 @@ public abstract class AbstractPeekPagingListReader<K> extends AbstractItemCounti
         synchronized (lock) {
             initialized = false;
             page = 0;
-            skipRows = 0;
+            startNumber = 0;
             results = null;
         }
     }
